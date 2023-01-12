@@ -102,3 +102,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# data
+data/
+
+# Submissions
+submissions/*/training_output*/
