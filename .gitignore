@@ -102,3 +102,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Starting kit
+submissions/starting_kit/
+
+# data
+data/
