@@ -192,16 +192,16 @@ def train_epoch(model, X_train, y_train, optimizer, criterion, max_len=64, log_i
     for idx, data in enumerate(data_loader):
         batch_loss = train_batch(model, data, optimizer, criterion)
         total_loss += batch_loss
-    if idx % log_interval == 0 and idx > 0:
-        cur_loss = total_loss / log_interval
-        print(
-            "| {:5d}/{:5d} steps | "
-            "loss {:5.5f} | ppl {:8.3f}".format(
-                idx, len(data_loader), cur_loss, np.exp(cur_loss),
+        if idx % log_interval == 0 and idx > 0:
+            cur_loss = total_loss / log_interval
+            print(
+                "| {:5d}/{:5d} steps | "
+                "loss {:5.5f} | ppl {:8.3f}".format(
+                    idx, len(data_loader), cur_loss, np.exp(cur_loss),
+                )
             )
-        )
-        losses.append(cur_loss)
-        total_loss = 0
+            losses.append(cur_loss)
+            total_loss = 0
     return losses
 
 ##########################################################
@@ -235,12 +235,17 @@ class Classifier(BaseEstimator):
                            self.nlayers, self.nclasses, self.dropout).to(self.device)
         self.optimizer = torch.optim.Adam(
             self.model.parameters(), lr=self.lr)
+        
+        X = X.iloc[:250000]
+        y = y.iloc[:250000]
 
-        log_interval = 500
+        log_interval = 50
         for epoch in range(1, self.epochs+1):
             print("----- Epoch " + str(epoch) + " -----")
             train_epoch(self.model, X, y, self.optimizer, self.criterion,
                         max_len=self.max_len, log_interval=log_interval, batch_size=self.batch_size)
+        torch.save(self.model.state_dict(), './best_model.pt')
+
 
     def predict(self, X):
         self.model.eval()
