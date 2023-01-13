@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "D:\Anaconda\lib\site-packages\rampwf\utils\submission.py", line 121, in train_test_submission
+    trained_model = problem.workflow.train_submission(
+  File ".\problem.py", line 37, in train_submission
+    est = self.estimator_workflow.train_submission(
+  File "D:\Anaconda\lib\site-packages\rampwf\workflows\sklearn_pipeline.py", line 58, in train_submission
+    submission_module = import_module_from_source(
+  File "D:\Anaconda\lib\site-packages\rampwf\utils\importing.py", line 27, in import_module_from_source
+    with open(source, 'rt') as fh:
+FileNotFoundError: [Errno 2] No such file or directory: 'submissions\\submissions/balanced_lr\\estimator.py'

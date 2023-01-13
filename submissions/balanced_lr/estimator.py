@@ -1,6 +1,7 @@
 from sklearn.base import BaseEstimator
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
+from sklearn.decomposition import PCA
 
 from imblearn.pipeline import make_pipeline as make_pipeline_imblearn
 from imblearn.under_sampling import RandomUnderSampler
@@ -32,13 +33,17 @@ class Classifier(BaseEstimator):
 
 def get_estimator():
 
-    feature_extractor = FeatureExtractor()
+    # feature_extractor = FeatureExtractor()
+
+    pca = PCA(n_components=.9)
 
     standard_scaler = StandardScaler()
 
+    random_sampler = RandomUnderSampler()
+
     classifier = Classifier()
 
-    pipe = make_pipeline_imblearn(feature_extractor, RandomUnderSampler(), standard_scaler, classifier)
+    pipe = make_pipeline_imblearn(standard_scaler, random_sampler, classifier)
 
     return pipe
 
