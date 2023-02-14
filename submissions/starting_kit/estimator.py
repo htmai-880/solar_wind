@@ -1,6 +1,11 @@
 from sklearn.base import BaseEstimator
 from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+import pandas as pd
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class FeatureExtractor(BaseEstimator):
@@ -11,6 +16,14 @@ class FeatureExtractor(BaseEstimator):
     def transform(self, X):
         return compute_rolling_std(X, 'Beta', '2h')
 
+class Scaler(BaseEstimator):
+    def fit(self, X, y):
+        self.ss = StandardScaler()
+        self.ss.fit(X)
+        return self
+    
+    def transform(self, X):
+        return pd.DataFrame(self.ss.transform(X), columns = X.columns)
 
 class Classifier(BaseEstimator):
 
@@ -19,6 +32,25 @@ class Classifier(BaseEstimator):
 
     def fit(self, X, y):
         self.model.fit(X, y)
+        order = np.argsort(self.model.coef_[0])
+        plt.figure()
+        plt.barh(np.arange(len(order)),
+                 self.model.coef_[0][order],
+                tick_label=X.columns[order])
+        plt.grid()
+        plt.title("Coefs of features")
+
+        abs_coefs = np.abs(self.model.coef_[0])
+        order = np.argsort(abs_coefs)
+        plt.show()
+        plt.figure()
+        plt.barh(np.arange(len(order)),
+                 abs_coefs[order],
+                tick_label=X.columns[order])
+        plt.grid()
+        plt.title("Absolute Coefs of features")
+        plt.show()
+
 
     def predict(self, X):
         y_pred = self.model.predict_proba(X)
@@ -31,7 +63,7 @@ def get_estimator():
 
     classifier = Classifier()
 
-    pipe = make_pipeline(feature_extractor, classifier)
+    pipe = make_pipeline(feature_extractor, Scaler(), classifier)
     return pipe
 
 
